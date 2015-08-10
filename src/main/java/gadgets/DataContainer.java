@@ -80,21 +80,6 @@ public class DataContainer<T extends RealType< T >> {
 		populateData(src1, src2, ch1, ch2, name1, name2);
 	}
 
-	protected void populateData(RandomAccessibleInterval<T> src1,
-			RandomAccessibleInterval<T> src2, int ch1, int ch2,
-			String name1, String name2){
-		sourceImage1 = src1;
-		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
-		maskHash = mask.hashCode();
-		// create a jobName so ResultHandler instances can all use the same object
-		// for the job name.
-		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
-
-		calculateStatistics();
-	}
-
 	/**
 	 * Creates a new {@link DataContainer} for a specific image channel
 	 * combination. We create default thresholds here that are the max and min of
@@ -157,12 +142,6 @@ public class DataContainer<T extends RealType< T >> {
 			final RandomAccessibleInterval<T> mask,
 			final long[] offset, final long[] size)
 			throws MissingPreconditionException {
-		sourceImage1 = src1;
-		sourceImage2 = src2;
-		this.ch1 = ch1;
-		this.ch2 = ch2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
 
 		final int numDims = src1.numDimensions();
 		maskBBOffset = new long[numDims];
@@ -175,13 +154,7 @@ public class DataContainer<T extends RealType< T >> {
 		maskType = MaskType.Irregular;
 		adjustRoiOffset(offset, maskBBOffset, dim);
 		adjustRoiSize(size, maskBBSize, dim, maskBBOffset);
-
-		maskHash = mask.hashCode();
-		// create a jobName so ResultHandler instances can all use the same
-		// object for the job name.
-		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
-
-		calculateStatistics();
+		populateData(src1, src2, ch1, ch2, name1, name2);
 	}
 
 	/**
@@ -202,11 +175,7 @@ public class DataContainer<T extends RealType< T >> {
 			String name1, String name2,
 			final long[] offset, final long size[])
 			throws MissingPreconditionException {
-		sourceImage1 = src1;
-		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
-		
+
 		final int numDims = src1.numDimensions();
 		final long[] dim = new long[numDims];
 		src1.dimensions(dim);
@@ -225,12 +194,20 @@ public class DataContainer<T extends RealType< T >> {
 
 		this.ch1 = ch1;
 		this.ch2 = ch2;
+		populateData(src1, src2, ch1, ch2, name1, name2);
+	}
 
+	protected void populateData(RandomAccessibleInterval<T> src1,
+			RandomAccessibleInterval<T> src2, int ch1, int ch2,
+			String name1, String name2){
+		sourceImage1 = src1;
+		sourceImage2 = src2;
+		sourceImage1Name = "Ch1_" + name1;
+		sourceImage2Name = "Ch2_" + name2;
 		maskHash = mask.hashCode();
 		// create a jobName so ResultHandler instances can all use the same
 		// object for the job name.
 		jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
-
 		calculateStatistics();
 	}
 
