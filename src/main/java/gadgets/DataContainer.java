@@ -291,10 +291,6 @@ public class DataContainer<T extends RealType< T >> {
 		}
 	}
 
-	public MaskType getMaskType() {
-		return maskType;
-	}
-
 	public RandomAccessibleInterval<T> getSourceImage1() {
 		return sourceImage1;
 	}
@@ -325,6 +321,14 @@ public class DataContainer<T extends RealType< T >> {
 
 	public long[] getMaskBBSize() {
 		return maskBBSize.clone();
+	}
+
+	public MaskType getMaskType(){
+		return maskType;
+	}
+
+	public int getMaskID(){
+		return maskHash;
 	}
 
 	public int getCh1() {
