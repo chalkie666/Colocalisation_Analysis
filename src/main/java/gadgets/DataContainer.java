@@ -54,9 +54,8 @@ public class DataContainer<T extends RealType< T >> {
 
 	/**
 	 * Creates a new {@link DataContainer} for a specific image channel
-	 * combination. We create default thresholds here that are the max and min of
-	 * the data type of the source image channels.
-	 *
+	 * combination. This constructor has no ROI or mask parameter,
+	 * so here we generate a mask covering all pixels.
 	 * @param src1 The channel one image source
 	 * @param src2 The channel two image source
 	 * @param ch1 The channel one image channel
@@ -64,12 +63,7 @@ public class DataContainer<T extends RealType< T >> {
 	 */
 	public DataContainer(RandomAccessibleInterval<T> src1,
 			RandomAccessibleInterval<T> src2, int ch1, int ch2,
-			String name1, String name2) {
-		sourceImage1 = src1;
-		sourceImage2 = src2;
-		sourceImage1Name = "Ch1_" + name1;
-		sourceImage2Name = "Ch2_" + name2;
-
+			String name1, String name2){
 		// create a mask that is true at all pixels.
 		final long[] dims = new long[src1.numDimensions()];
 		src1.dimensions(dims);
@@ -83,7 +77,16 @@ public class DataContainer<T extends RealType< T >> {
 		mask.dimensions(maskBBSize);
 		// indicated that there is actually no mask
 		maskType = MaskType.None;
+		populateData(src1, src2, ch1, ch2, name1, name2);
+	}
 
+	protected void populateData(RandomAccessibleInterval<T> src1,
+			RandomAccessibleInterval<T> src2, int ch1, int ch2,
+			String name1, String name2){
+		sourceImage1 = src1;
+		sourceImage2 = src2;
+		sourceImage1Name = "Ch1_" + name1;
+		sourceImage2Name = "Ch2_" + name2;
 		maskHash = mask.hashCode();
 		// create a jobName so ResultHandler instances can all use the same object
 		// for the job name.
@@ -91,6 +94,46 @@ public class DataContainer<T extends RealType< T >> {
 
 		calculateStatistics();
 	}
+
+	/**
+	 * Creates a new {@link DataContainer} for a specific image channel
+	 * combination. We create default thresholds here that are the max and min of
+	 * the data type of the source image channels.
+	 *
+	 * @param src1 The channel one image source
+	 * @param src2 The channel two image source
+	 * @param ch1 The channel one image channel
+	 * @param ch2 The channel two image channel
+	 */
+	//public DataContainer(RandomAccessibleInterval<T> src1,
+	//		RandomAccessibleInterval<T> src2, int ch1, int ch2,
+	//		String name1, String name2) {
+	//	sourceImage1 = src1;
+	//	sourceImage2 = src2;
+	//	sourceImage1Name = "Ch1_" + name1;
+	//	sourceImage2Name = "Ch2_" + name2;
+
+	//	// create a mask that is true at all pixels.
+	//	final long[] dims = new long[src1.numDimensions()];
+	//	src1.dimensions(dims);
+	//	mask = MaskFactory.createMask(dims, true);
+	//	this.ch1 = ch1;
+	//	this.ch2 = ch2;
+	//	// fill mask dimension information, here the whole image
+	//	maskBBOffset = new long[mask.numDimensions()];
+	//	Arrays.fill(maskBBOffset, 0);
+	//	maskBBSize = new long[mask.numDimensions()];
+	//	mask.dimensions(maskBBSize);
+	//	// indicated that there is actually no mask
+	//	maskType = MaskType.None;
+	//
+	//	maskHash = mask.hashCode();
+	//	// create a jobName so ResultHandler instances can all use the same object
+	//	// for the job name.
+	//	jobName = "Colocalization_of_" + sourceImage1Name + "_versus_" + sourceImage2Name + "_" + maskHash;
+	//
+	//	calculateStatistics();
+	//}
 
 	/**
 	 * Creates a new {@link DataContainer} for a specific set of image and
